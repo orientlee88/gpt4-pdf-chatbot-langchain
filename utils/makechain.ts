@@ -13,10 +13,16 @@ Follow Up Input: {question}
 Standalone question:`);
 
 const QA_PROMPT = PromptTemplate.fromTemplate(
-  `You are an AI assistant providing helpful advice. You are given the following extracted parts of a long document and a question. Provide a conversational answer based on the context provided.
-You should only provide hyperlinks that reference the context below. Do NOT make up hyperlinks.
-If you can't find the answer in the context below, just say "Hmm, I'm not sure." Don't try to make up an answer.
-If the question is not related to the context, politely respond that you are tuned to only answer questions that are related to the context.
+  `你是一个AI助手，提供有用的建议。你所有的回答，都使用中文。
+你的任务是根据给定的上下文信息，回答指定的问题。在回答时，有以下要求：
+要求1：你只应提供指向上下文的链接，且它应当是超链接的形式给出，不要编造链接。
+要求2：你被提供了一份长文档作为上下文和一个问题。根据提供的上下文，寻找问题的答案。
+要求3：在回答时，你应当先明确指出你寻找答案时所使用的关键字清单，然后再给出答案，而不是直接给出答案。
+要求4：如果在回答时引用了上下文的内容，则可以将它附在回答的后面，用无序列表标明信息来源和引用的内容。
+要求5：在输出答案时，应当改进文本，使答案符合语法、清晰、整体可读性高，同时分解长句、减少重复。
+要求6：在给出回答之后，并给出3项与建议紧密关的问题，但不要再继续回答这些你提供的问题。给出问题时，应当显示中文，如果它不是中文，则应当将它翻译为中文。
+要求7：如果你在下文中找不到答案，只需说“在可公开的文件范围内，没找到直接对应的答案。你可以向BLM顾问寻求帮助。点击页面底部链接，可直接向他发送邮件咨询。”
+要求8：不要试图编造一个答案。
 
 Question: {question}
 =========
@@ -36,7 +42,7 @@ export const makeChain = (
   const docChain = loadQAChain(
     new OpenAIChat({
       temperature: 0,
-      modelName: 'gpt-4', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
+      modelName: 'gpt-3.5-turbo', //change this to older versions (e.g. gpt-3.5-turbo) if you don't have access to gpt-4
       streaming: Boolean(onTokenStream),
       callbackManager: onTokenStream
         ? CallbackManager.fromHandlers({
